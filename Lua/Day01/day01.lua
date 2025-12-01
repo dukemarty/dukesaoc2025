@@ -21,7 +21,7 @@ end
 
 
 function part1(lines)
-  print_part_header(1, "Zero's count")
+  print_part_header(1, "Zero's count at turn end")
   
   p = 50
   res = 0
@@ -45,17 +45,45 @@ function part1(lines)
   print("Number of zeros: " .. res)
 end
 
+function part2(lines)
+  print_part_header(2, "Any zero's count")
+
+  p = 50
+  res = 0
+  for _, line in ipairs(lines) do
+    -- print("line: " .. line)
+    dir = string.sub(line, 1, 1)
+    dist = tonumber(string.sub(line, 2, -1))
+    -- print("dir = " .. dir .. " , dist = " .. dist)
+    if dir == "L" then
+      p = p - dist
+      if p < 0 then
+        res = res + math.abs(p) // 100
+      end
+    elseif dir == "R" then
+      p = p + dist
+      if p > 100 then
+        res = res + p // 100
+      end
+    else
+      error("invalid turn direction")
+    end
+   -- print("Next p = " .. p)
+    p = p % 100
+    if p == 0 then
+      res = res + 1
+    end
+  end
+  print("Number of zeros: " .. res)
+end
 
 print_day_header(1, "Secret Entrance")
 
 -- raw_data = lines_from("sample.txt")
 raw_data = lines_from("puzzle.txt")
-print(raw_data)
-
+--print(raw_data)
 
 part1(raw_data)
 
-print_part_header(2, "lskndlck")
-
-
+part2(raw_data)
 
