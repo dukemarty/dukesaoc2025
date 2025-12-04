@@ -103,7 +103,7 @@ end
 -- MAIN PROGRAM
 -- ----------------------------------------------------------------
 
-print_day_header(3, "Lobby ")
+print_day_header(3, "Lobby")
 
 --raw_data = lines_from("Day03/sample.txt")
 raw_data = lines_from("Day03/puzzle.txt")
