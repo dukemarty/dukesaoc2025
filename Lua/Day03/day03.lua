@@ -3,6 +3,10 @@ require '../aoc_utils/aoclib'
 require '../aoc_utils/aocio'
 
 
+-- ----------------------------------------------------------------
+-- Part 1 stuff
+
+-- helper function for part 1
 function part1_find_max_joltage(line)
   lpos, rpos = #line - 1, #line
   l, r = line:sub(lpos, lpos), line:sub(rpos, rpos)
@@ -25,6 +29,7 @@ function part1_find_max_joltage(line)
   return l .. r
 end
 
+-- part 1 solution
 function part1(lines)
   print_part_header(1, "Total max voltage")
   
@@ -38,24 +43,65 @@ function part1(lines)
   print("Sum of maximized joltage: " .. res)
 end
 
-function part2(line)
-  print_part_header(2, "Extended invalid IDs")
-  
-  res = 0
-  
-  for p1, p2  in string.gmatch(line, "(%d+)-(%d+),?") do
-    print("Next pair: " .. p1 .. " - " .. p2)
-  
-    for i = p1, p2, 1 do
-      if part2_check_is_invalid(i) then
---        print("   Found invalid: " .. i)
-        res = res + i
+
+-- ---------------------------------------------------------------
+-- Part 2 stuff
+
+
+function part2_move_left_upto(line, poss, vals, i, boundary)
+    for j = poss[i], boundary+1, -1 do
+      if line:sub(j, j) >= vals[i] then
+        if i > 1 then
+          part2_move_left_upto(line, poss, vals, i-1, j)
+        end
+        poss[i], vals[i] = j, line:sub(j, j)
       end
+    end
+end
+
+-- main helper function for part 2
+-- create basic data structures, call recursive search
+function part2_find_max_joltage(line, battery_count)
+  poss, vals= {}, {}
+  for i = 0, battery_count-1, 1 do
+    poss[i+1], vals[i+1] = #line - i, line:sub(#line - i,#line - i)
+  end
+--  print("Initials: \n" .. dump(poss) .. "\n" .. dump(vals))
+ 
+  hval_index = battery_count
+  for cand = poss[hval_index], 1, -1 do
+    if line:sub(cand, cand) >= vals[hval_index] then
+--      print("Found better candidate for highest value at index " .. cand .. ": " .. line:sub(cand, cand))
+      part2_move_left_upto(line, poss, vals, hval_index - 1, cand)
+      poss[hval_index], vals[hval_index] = cand, line:sub(cand, cand)
     end
   end
   
-  print("Sum of extended invalid ids: " .. string.format("%d", res))
+  res = ""
+  for i = hval_index, 1, -1 do
+    res = res .. vals[i]
+  end
+  return res
 end
+
+-- part 2 solution
+function part2(lines)
+  print_part_header(2, "12 batteries")
+  
+  res = 0
+  
+  for _, l in ipairs(lines) do
+--    print("Next line: " .. l)
+    res = res + part2_find_max_joltage(l, 12)
+  end
+    
+  print("Sum of maximized joltage: " .. res)
+end
+
+
+-- ----------------------------------------------------------------
+-- MAIN PROGRAM
+-- ----------------------------------------------------------------
 
 print_day_header(3, "Lobby ")
 
@@ -66,5 +112,5 @@ raw_data = lines_from("Day03/puzzle.txt")
 
 part1(raw_data)
 
---part2(raw_data)
+part2(raw_data)
 
