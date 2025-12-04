@@ -79,8 +79,25 @@ function part2(data)
   
   res = 0
   
-  
-  
+  repeat
+    removable = {}
+    for r = 1, #data-1, 1 do
+      for c = 1, #data[1]-1, 1 do
+        if data[r][c]==AT and count_around(data, r, c, AT) < 4 then
+  --        print(string.format("Found accessible: %d / %d", r, c))
+          removable[#removable + 1] = { r, c }
+          res = res + 1
+        end
+      end
+    end
+    
+--    print("Found " .. #removable .. " fields: " .. dump(removable))
+    for _, p in ipairs(removable) do
+--      print(string.format("data[%d][%d] before : %d ...", p[1], p[2], data[p[1]][p[2]]))
+      data[p[1]][p[2]] = DOT
+--      print(string.format("                         ... and after: %d", data[p[1]][p[2]]))
+    end
+  until #removable == 0
   
   print("Number of removable paper rolls: " .. res)
 end
